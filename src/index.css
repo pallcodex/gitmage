@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #F8FAFC; --surface: #FFFFFF; --elevated: #F1F5F9; --border: #E2E8F0;
+  --primary: #2563EB; --primary-hover: #1D4ED8; --fg: #0F172A; --muted: #64748B;
+  --glass: rgba(255,255,255,.72); --glass-strong: rgba(255,255,255,.92); --glass-border: rgba(15,23,42,.08);
+  --shadow: 0 8px 30px rgba(15,23,42,.08);
+}
+.dark {
+  --bg: #080A0F; --surface: #11151D; --elevated: #171D28; --border: rgba(255,255,255,.08);
+  --primary: #3B82F6; --primary-hover: #2563EB; --fg: #F8FAFC; --muted: #94A3B8;
+  --glass: rgba(17,21,29,.72); --glass-strong: rgba(17,21,29,.94); --glass-border: rgba(255,255,255,.08);
+  --shadow: 0 8px 30px rgba(0,0,0,.4);
+}
+@layer base {
+  * { @apply border-border; }
+  html { color-scheme: light; }
+  html.dark { color-scheme: dark; }
+  body { background: var(--bg); color: var(--fg); font-family: 'Inter Variable', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
+}
+.glass {
+  background: var(--glass); border: 1px solid var(--glass-border);
+  -webkit-backdrop-filter: blur(14px) saturate(140%); backdrop-filter: blur(14px) saturate(140%);
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.06);
+}
+.glass-strong { background: var(--glass-strong); }
+@keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.fade-in { animation: fade .15s ease-out; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
