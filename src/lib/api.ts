@@ -1,3 +1,5 @@
+import { t, translateServer } from './i18n'
+
 export class ApiError extends Error {
   constructor(public status: number, message: string) { super(message) }
 }
@@ -14,9 +16,9 @@ export async function api<T>(path: string, init: Init = {}): Promise<T> {
   const data = (await r.json().catch(() => ({}))) as { error?: string }
   if (!r.ok) {
     if (r.status === 401 && !init.quiet) window.dispatchEvent(new Event('gitmage:expired'))
-    throw new ApiError(r.status, data.error === 'session_expired' ? 'Your session expired. Please sign in again.' : data.error || `Request failed (${r.status})`)
+    throw new ApiError(r.status, data.error === 'session_expired' ? t('login.expired') : data.error ? translateServer(data.error) : t('err.request', { n: r.status }))
   }
   return data as T
 }
 
-export const errMsg = (e: unknown) => (e instanceof Error ? e.message : 'Something went wrong')
+export const errMsg = (e: unknown) => (e instanceof Error ? e.message : t('err.generic'))

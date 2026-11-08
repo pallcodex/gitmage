@@ -7,14 +7,15 @@ import { Button, Card, EmptyState, ErrorState, SelectField, Skeleton } from '../
 import { ACTIVE, DeploymentStatus } from '../components/DeploymentStatus'
 import { api, errMsg } from '../lib/api'
 import { timeAgo } from '../lib/utils'
+import { t } from '../lib/i18n'
 import type { VDeployment, VProject } from '../types'
 
 function Setup() {
-  const steps = ['Create a token at vercel.com/account/tokens.', 'Add VERCEL_TOKEN to your Gitmage project environment variables (add VERCEL_TEAM_ID if you use a team).', 'Redeploy Gitmage, then reload this page.', 'In Vercel, create a project connected to the GitHub repository you want to deploy.']
+  const steps = [t('dp.s1'), t('dp.s2'), t('dp.s3'), t('dp.s4')]
   return (
     <Card>
-      <h2 className="font-medium">Connect Vercel</h2>
-      <p className="mt-1 text-sm text-muted">The token stays on the server and is never sent to your browser.</p>
+      <h2 className="font-medium">{t('dp.connect')}</h2>
+      <p className="mt-1 text-sm text-muted">{t('dp.tokenNote')}</p>
       <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm">{steps.map((s) => <li key={s}>{s}</li>)}</ol>
     </Card>
   )
@@ -62,36 +63,36 @@ export default function Deployments() {
     setBusy(true)
     try {
       const d = await api<{ id: string; url: string; state: string }>('/api/vercel?action=deploy', { method: 'POST', body: { project, owner: repo.owner, repo: repo.name, branch } })
-      toast('success', 'Deployment created. Status will update below.')
+      toast('success', t('dp.created'))
       void loadDeps()
       return d
     } catch (e) { toast('error', errMsg(e)) } finally { setBusy(false) }
   }
 
-  if (!configured) return <div className="space-y-4"><h1 className="text-xl font-semibold">Deployments</h1><Setup /></div>
+  if (!configured) return <div className="space-y-4"><h1 className="text-xl font-semibold">{t('nav.deployments')}</h1><Setup /></div>
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-semibold">Deployments</h1>
+      <h1 className="text-xl font-semibold">{t('nav.deployments')}</h1>
       <Card className="space-y-4">
-        <SelectField label="Repository" value={repoName} onChange={(e) => setRepoName(e.target.value)}>
-          <option value="">Select a repository</option>{repos.map((r) => <option key={r.id} value={r.fullName}>{r.fullName}</option>)}
+        <SelectField label={t('dp.repo')} value={repoName} onChange={(e) => setRepoName(e.target.value)}>
+          <option value="">{t('dp.selectRepo')}</option>{repos.map((r) => <option key={r.id} value={r.fullName}>{r.fullName}</option>)}
         </SelectField>
-        <SelectField label="Branch" value={branch} onChange={(e) => setBranch(e.target.value)} disabled={!repo}>
+        <SelectField label={t('dp.branch')} value={branch} onChange={(e) => setBranch(e.target.value)} disabled={!repo}>
           {branches.map((b) => <option key={b}>{b}</option>)}
         </SelectField>
-        <SelectField label="Vercel project" value={project} onChange={(e) => setProject(e.target.value)} disabled={!repo}>
-          <option value="">Select a project</option>{projects.map((p) => <option key={p.id} value={p.name}>{p.name}</option>)}
+        <SelectField label={t('dp.project')} value={project} onChange={(e) => setProject(e.target.value)} disabled={!repo}>
+          <option value="">{t('dp.selectProject')}</option>{projects.map((p) => <option key={p.id} value={p.name}>{p.name}</option>)}
         </SelectField>
-        {projects.length === 0 && <p className="text-xs text-muted">No Vercel projects found. Create one in Vercel and connect it to the repository first.</p>}
-        <Button className="w-full" loading={busy} disabled={!repo || !branch || !project} onClick={() => void deploy()}><Rocket className="h-4 w-4" />Deploy</Button>
+        {projects.length === 0 && <p className="text-xs text-muted">{t('dp.noProjects')}</p>}
+        <Button className="w-full" loading={busy} disabled={!repo || !branch || !project} onClick={() => void deploy()}><Rocket className="h-4 w-4" />{t('dp.deploy')}</Button>
       </Card>
 
       <section>
-        <div className="mb-3 flex items-center justify-between"><h2 className="font-medium">Recent deployments</h2><Button variant="ghost" onClick={() => void loadDeps()} aria-label="Refresh"><RefreshCw className="h-4 w-4" /></Button></div>
+        <div className="mb-3 flex items-center justify-between"><h2 className="font-medium">{t('dp.recent')}</h2><Button variant="ghost" onClick={() => void loadDeps()} aria-label={t('refresh')}><RefreshCw className="h-4 w-4" /></Button></div>
         {error ? <ErrorState message={error} onRetry={() => void loadDeps()} />
           : deps === null ? <div className="space-y-2">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-16" />)}</div>
-          : deps.length === 0 ? <EmptyState icon={Rocket} title="No deployments yet" text="Pick a repository above and deploy it." />
+          : deps.length === 0 ? <EmptyState icon={Rocket} title={t('ov.noDepsTitle')} text={t('dp.emptyText')} />
           : (
             <ul className="space-y-2">
               {deps.map((d) => (
@@ -99,7 +100,7 @@ export default function Deployments() {
                   <div className="flex items-center justify-between gap-3"><span className="truncate font-medium">{d.name}</span><DeploymentStatus state={d.state} /></div>
                   <div className="mt-1 flex items-center justify-between gap-3 text-xs text-muted">
                     <span className="truncate">{d.branch ? `${d.branch} · ` : ''}{d.createdAt ? timeAgo(d.createdAt) : ''}</span>
-                    {d.state === 'READY' && <a href={`https://${d.url}`} target="_blank" rel="noreferrer" className="inline-flex shrink-0 items-center gap-1 text-primary">Open site <ExternalLink className="h-3 w-3" /></a>}
+                    {d.state === 'READY' && <a href={`https://${d.url}`} target="_blank" rel="noreferrer" className="inline-flex shrink-0 items-center gap-1 text-primary">{t('dp.openSite')} <ExternalLink className="h-3 w-3" /></a>}
                   </div>
                 </li>
               ))}

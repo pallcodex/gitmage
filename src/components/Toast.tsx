@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useState, type ReactNode } from 'react'
 import { AlertCircle, CheckCircle2, ExternalLink } from 'lucide-react'
+import { t as tr } from '../lib/i18n'
 
 interface T { id: number; kind: 'success' | 'error'; message: string; href?: string }
 const Ctx = createContext<(kind: T['kind'], message: string, href?: string) => void>(() => undefined)
@@ -20,7 +21,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             {t.kind === 'success' ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" /> : <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-500" />}
             <div className="min-w-0 flex-1 break-words">
               {t.message}
-              {t.href && <a href={t.href} target="_blank" rel="noreferrer" className="mt-1 flex items-center gap-1 text-primary">Open <ExternalLink className="h-3 w-3" /></a>}
+              {t.href && <a href={t.href} target="_blank" rel="noreferrer" className="mt-1 flex items-center gap-1 text-primary">{tr('open')} <ExternalLink className="h-3 w-3" /></a>}
             </div>
           </div>
         ))}

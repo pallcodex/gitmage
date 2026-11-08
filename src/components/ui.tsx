@@ -1,6 +1,7 @@
 import { useEffect, useId, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from 'react'
 import { AlertCircle, Loader2, X, type LucideIcon } from 'lucide-react'
 import { cx } from '../lib/utils'
+import { t } from '../lib/i18n'
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger'
 const V: Record<Variant, string> = {
@@ -60,7 +61,7 @@ export function Dialog({ open, onClose, title, children }: { open: boolean; onCl
       <div className="glass glass-strong fade-in relative max-h-[92dvh] w-full overflow-y-auto rounded-t-2xl p-5 sm:max-w-md sm:rounded-2xl" style={{ paddingBottom: 'max(1.25rem, env(safe-area-inset-bottom))' }}>
         <div className="mb-4 flex items-center justify-between gap-3">
           <h2 className="text-lg font-semibold">{title}</h2>
-          <button onClick={onClose} aria-label="Close" className="grid h-9 w-9 place-items-center rounded-lg text-muted hover:bg-elevated"><X className="h-4 w-4" /></button>
+          <button onClick={onClose} aria-label={t('close')} className="grid h-9 w-9 place-items-center rounded-lg text-muted hover:bg-elevated"><X className="h-4 w-4" /></button>
         </div>
         {children}
       </div>
@@ -86,7 +87,7 @@ export function ErrorState({ message, onRetry }: { message: string; onRetry?: ()
     <div className="flex flex-col items-center rounded-xl border border-red-500/30 px-6 py-10 text-center">
       <AlertCircle className="mb-2 h-5 w-5 text-red-500" />
       <p className="text-sm">{message}</p>
-      {onRetry && <Button variant="secondary" className="mt-4" onClick={onRetry}>Try again</Button>}
+      {onRetry && <Button variant="secondary" className="mt-4" onClick={onRetry}>{t('retry')}</Button>}
     </div>
   )
 }

@@ -1,6 +1,6 @@
 # Gitmage
 
-GitHub Repository Manager: kelola, buat, dan hapus repository GitHub, lalu deploy ke Vercel. Dibuat dengan React, TypeScript, Vite, Tailwind CSS, Lucide React, dan Vercel Functions.
+GitHub Repository Manager (UI dwibahasa Indonesia/English, bisa diganti dari navbar, halaman login, atau Settings): kelola, buat, dan hapus repository GitHub, lalu deploy ke Vercel. Dibuat dengan React, TypeScript, Vite, Tailwind CSS, Lucide React, dan Vercel Functions.
 
 ## Struktur
 

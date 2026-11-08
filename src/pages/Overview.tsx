@@ -10,6 +10,7 @@ import { ImportRepoDialog } from '../components/ImportRepoDialog'
 import { DeploymentStatus } from '../components/DeploymentStatus'
 import { api } from '../lib/api'
 import { timeAgo } from '../lib/utils'
+import { t } from '../lib/i18n'
 import type { VDeployment } from '../types'
 
 export default function Overview() {
@@ -32,32 +33,32 @@ export default function Overview() {
         <div className="min-w-0"><h1 className="truncate text-xl font-semibold">{user?.name || user?.login}</h1><p className="text-sm text-muted">@{user?.login}</p></div>
       </div>
       <div className="grid grid-cols-2 gap-2 sm:max-w-sm">
-        <Button onClick={() => setCreate(true)}><Plus className="h-4 w-4" />Create Repository</Button>
-        <Button variant="secondary" onClick={() => setImp(true)}><Download className="h-4 w-4" />Import Repository</Button>
+        <Button onClick={() => setCreate(true)}><Plus className="h-4 w-4" />{t('ov.create')}</Button>
+        <Button variant="secondary" onClick={() => setImp(true)}><Download className="h-4 w-4" />{t('ov.import')}</Button>
       </div>
 
       {error ? <ErrorState message={error} onRetry={() => void reload()} /> : (
         <>
           <div className="grid grid-cols-3 gap-2">
-            {[['Repositories', repos.length], ['Public', pub], ['Private', repos.length - pub]].map(([l, v]) => (
+            {[[t('ov.total'), repos.length], [t('public'), pub], [t('private'), repos.length - pub]].map(([l, v]) => (
               <Card key={l}><p className="text-xs text-muted">{l}</p>{loading ? <Skeleton className="mt-2 h-7 w-10" /> : <p className="mt-1 text-2xl font-semibold">{v}</p>}</Card>
             ))}
           </div>
-          {!loading && recent[0] && <p className="text-sm text-muted">Last updated: <a className="text-primary" href={recent[0].url} target="_blank" rel="noreferrer">{recent[0].name}</a> {timeAgo(recent[0].updatedAt)}</p>}
+          {!loading && recent[0] && <p className="text-sm text-muted">{t('ov.last')} <a className="text-primary" href={recent[0].url} target="_blank" rel="noreferrer">{recent[0].name}</a> {timeAgo(recent[0].updatedAt)}</p>}
           <section>
-            <div className="mb-3 flex items-center justify-between"><h2 className="font-medium">Recent repositories</h2><Link to="/repositories" className="text-sm text-primary">View all</Link></div>
+            <div className="mb-3 flex items-center justify-between"><h2 className="font-medium">{t('ov.recent')}</h2><Link to="/repositories" className="text-sm text-primary">{t('ov.viewAll')}</Link></div>
             {loading ? <div className="space-y-2">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-24" />)}</div>
-              : recent.length === 0 ? <EmptyState icon={FolderGit2} title="No repositories yet" text="Create your first repository or import an existing one." action={<Button onClick={() => setCreate(true)}>Create Repository</Button>} />
+              : recent.length === 0 ? <EmptyState icon={FolderGit2} title={t('ov.emptyTitle')} text={t('ov.emptyText')} action={<Button onClick={() => setCreate(true)}>{t('ov.create')}</Button>} />
               : <ul className="space-y-2">{recent.map((r) => <RepoCard key={r.id} repo={r} />)}</ul>}
           </section>
         </>
       )}
 
       <section>
-        <div className="mb-3 flex items-center justify-between"><h2 className="font-medium">Deployments</h2><Link to="/deployments" className="text-sm text-primary">Manage</Link></div>
-        {!user?.vercelConfigured ? <EmptyState icon={Rocket} title="Vercel is not connected" text="Add a Vercel token on the server to deploy from Gitmage." action={<Link to="/deployments" className="text-sm text-primary">See setup</Link>} />
+        <div className="mb-3 flex items-center justify-between"><h2 className="font-medium">{t('nav.deployments')}</h2><Link to="/deployments" className="text-sm text-primary">{t('ov.manage')}</Link></div>
+        {!user?.vercelConfigured ? <EmptyState icon={Rocket} title={t('ov.vncTitle')} text={t('ov.vncText')} action={<Link to="/deployments" className="text-sm text-primary">{t('ov.seeSetup')}</Link>} />
           : deps === null ? <Skeleton className="h-16" />
-          : deps.length === 0 ? <EmptyState icon={Rocket} title="No deployments yet" text="Deployments you trigger will show up here." />
+          : deps.length === 0 ? <EmptyState icon={Rocket} title={t('ov.noDepsTitle')} text={t('ov.noDepsText')} />
           : <ul className="space-y-2">{deps.map((d) => <li key={d.id} className="flex items-center justify-between gap-3 rounded-xl border border-border bg-surface p-3 text-sm"><span className="truncate">{d.name}</span><DeploymentStatus state={d.state} /></li>)}</ul>}
       </section>
 

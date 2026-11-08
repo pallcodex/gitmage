@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Button, Dialog, Field } from './ui'
 import { api, errMsg } from '../lib/api'
+import { t } from '../lib/i18n'
 import { useToast } from './Toast'
 import { useRepos } from '../hooks/useRepos'
 import type { Repo } from '../types'
@@ -19,20 +20,20 @@ export function ImportRepoDialog({ open, onClose }: { open: boolean; onClose: ()
     try {
       const { repo } = await api<{ repo: Repo }>('/api/repos', { method: 'POST', body: { fork: { owner: m[1], name: m[2] } } })
       addRepo(repo)
-      toast('success', `Fork of ${m[1]}/${m[2]} requested. GitHub may take a moment to finish copying.`, repo.url)
+      toast('success', t('im.success', { name: `${m[1]}/${m[2]}` }), repo.url)
       setValue(''); onClose()
     } catch (e) { setError(errMsg(e)) } finally { setBusy(false) }
   }
 
   return (
-    <Dialog open={open} onClose={onClose} title="Import repository">
+    <Dialog open={open} onClose={onClose} title={t('im.title')}>
       <div className="space-y-4">
-        <p className="text-sm text-muted">Copies a public GitHub repository into your account as a fork.</p>
-        <Field label="Repository" value={value} onChange={(e) => setValue(e.target.value)} placeholder="owner/repository or GitHub URL" autoCapitalize="none" autoCorrect="off" error={value && !m ? 'Use the format owner/repository.' : undefined} />
+        <p className="text-sm text-muted">{t('im.text')}</p>
+        <Field label={t('im.label')} value={value} onChange={(e) => setValue(e.target.value)} placeholder={t('im.ph')} autoCapitalize="none" autoCorrect="off" error={value && !m ? t('im.err') : undefined} />
         {error && <p className="rounded-lg border border-red-500/30 p-3 text-sm text-red-500" role="alert">{error}</p>}
         <div className="flex gap-2">
-          <Button variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
-          <Button className="flex-1" loading={busy} disabled={!m} onClick={() => void submit()}>Import</Button>
+          <Button variant="secondary" className="flex-1" onClick={onClose}>{t('cancel')}</Button>
+          <Button className="flex-1" loading={busy} disabled={!m} onClick={() => void submit()}>{t('im.submit')}</Button>
         </div>
       </div>
     </Dialog>
